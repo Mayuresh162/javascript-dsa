@@ -1,7 +1,7 @@
 function flatten(oldArr){
     // add whatever parameters you deem necessary - good luck!
     var newArr = []
-        for(var i = 0; i < oldArr.length; i++){
+    for(var i = 0; i < oldArr.length; i++){
           if(Array.isArray(oldArr[i])){
                 newArr = newArr.concat(flatten(oldArr[i]))
           } else {
