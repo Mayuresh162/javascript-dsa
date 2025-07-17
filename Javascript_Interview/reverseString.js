@@ -41,3 +41,9 @@ function reverseWordsInPlace(str) {
 const input = "the sky is blue";
 const output = reverseWordsInPlace(input);
 console.log(output); // "blue is sky the"
+
+// let res = "";
+// for (let i = input.length - 1; i >= 0; i--) {
+//   res += input[i];
+// }
+// console.log(res);
