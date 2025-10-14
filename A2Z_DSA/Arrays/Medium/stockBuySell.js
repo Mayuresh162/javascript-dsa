@@ -21,13 +21,13 @@ function stockBuySell(arr) {
 
     // another optimnal approach
     let max = 0;
-    let min = prices[0];
-    for (let i=0; i<prices.length; i++) {
-        if (prices[i] - min > max) {
-            max = prices[i] - min;
+    let min = arr[0];
+    for (let i=0; i<arr.length; i++) {
+        if (arr[i] - min > max) {
+            max = arr[i] - min;
         }
-        if (prices[i] < min) {
-            min = prices[i];
+        if (arr[i] < min) {
+            min = arr[i];
         }
     }
     console.log(max);
@@ -36,3 +36,4 @@ function stockBuySell(arr) {
 stockBuySell([7,1,5,3,6,4]);
 
 stockBuySell([7,6,4,3,1]);
+
