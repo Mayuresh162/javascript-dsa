@@ -4,6 +4,7 @@ A comprehensive collection of Data Structures and Algorithms implementations in 
 
 - LeetCode problems
 - Striver's A2Z DSA sheet problems
+- Namaste DSA problems
 - Interview Questions
 - Polyfills
 - Design Patterns
