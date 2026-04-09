@@ -54,64 +54,51 @@ function checkExpression(str) {
 
     // without regex
     const stack = [];
+    const matching = { '}': '{', ']': '[', ')': '(' };
     const open = "{[(";
     const close = "}])";
-    const matching = { '}': '{', ']': '[', ')': '(' };
     
     const binaryOps = "+-*/=";
-    const unaryOps = "@#";
-
+    const unaryOps = "@#"; // Postfix unary based on your logic
+    
     let hasOperand = false;
-    let lastToken = null; // Tracks the last non-space, non-bracket character
+    let expectOperand = true; // Start by expecting an operand or a prefix (if any)
 
-    // 1. Balance Check (Stack)
     for (let i = 0; i < str.length; i++) {
         const char = str[i];
+
+        if (char === " ") continue;
+
         if (open.includes(char)) {
             stack.push(char);
+            // After an open bracket, we still expect an operand
         } else if (close.includes(char)) {
             if (stack.pop() !== matching[char]) return "Unbalanced";
-        }
-    }
-    if (stack.length > 0) return "Unbalanced";
-
-    // 2. Validity Check (Manual Scan)
-    // We create a "clean" version without spaces or brackets to check neighbors
-    let clean = "";
-    for (let char of str) {
-        if (char !== " " && !open.includes(char) && !close.includes(char)) {
-            clean += char;
-        }
-    }
-
-    if (clean.length === 0) return "Balanced and Invalid";
-
-    const isOpnd = (c) => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-
-    for (let i = 0; i < clean.length; i++) {
-        const curr = clean[i];
-        
-        if (isOpnd(curr)) {
+            // After a closing bracket, the "expectOperand" state doesn't change 
+            // (it depends on what was inside)
+        } else if ((char >= '0' && char <= '9') || (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z')) {
             hasOperand = true;
-        } else if (binaryOps.includes(curr)) {
-            // Check left and right
-            const left = clean[i - 1];
-            const right = clean[i + 1];
-            
-            const leftValid = left && (isOpnd(left) || unaryOps.includes(left));
-            const rightValid = right && isOpnd(right);
-            
-            if (!leftValid || !rightValid) return "Balanced and Invalid";
-        } else if (unaryOps.includes(curr)) {
-            // Check left only
-            const left = clean[i - 1];
-            if (!left || (!isOpnd(left) && !unaryOps.includes(left))) {
-                return "Balanced and Invalid";
-            }
+            expectOperand = false; // We got our operand
+        } else if (binaryOps.includes(char)) {
+            // Binary ops need something before them (not expecting operand) 
+            // and must be followed by something (set expectOperand to true)
+            if (expectOperand) return "Balanced and Invalid"; 
+            expectOperand = true;
+        } else if (unaryOps.includes(char)) {
+            // Your logic treats @# as postfix (requires left neighbor)
+            if (expectOperand) return "Balanced and Invalid";
+            // Postfix doesn't reset expectOperand because we still don't want a binary op next
+        } else {
+            // Unknown characters
+            return "Balanced and Invalid";
         }
     }
 
-    return hasOperand ? "Balanced and Valid" : "Balanced and Invalid";
+    // Final checks
+    if (stack.length > 0) return "Unbalanced";
+    if (!hasOperand || expectOperand) return "Balanced and Invalid";
+
+    return "Balanced and Valid";
 }
 
 // Examples
