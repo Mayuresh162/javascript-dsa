@@ -9,7 +9,7 @@ var evalRPN = function(tokens) {
         if (el == "+" || el == "-" || el == "/" || el == "*") {
             const a = stack.pop();
             const b = stack.pop();
-            let ans = eval(b+el+a);
+            let ans = eval(`${b} ${el} ${a}`);
             stack.push(Math.trunc(ans));
         } else {
             stack.push(el);
