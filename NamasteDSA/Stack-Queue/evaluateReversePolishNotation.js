@@ -15,7 +15,7 @@ var evalRPN = function(tokens) {
             stack.push(el);
         }
     }
-    return Number(stack.pop());
+    return Number(stack.pop()); // return stack[0];
   
     // cleaned code
     const stack = [];
@@ -35,5 +35,5 @@ var evalRPN = function(tokens) {
             stack.push(+el);
         }
     }
-    return stack.pop();
+    return stack.pop(); // return stack[0];
 };
