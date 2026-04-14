@@ -8,7 +8,11 @@ function flattenObject(obj) {
             const value = current[key];
 
             if (typeof value === "object" && value !== null) {
-                helper(value, newKey);
+                if (Array.isArray(value)) {
+                    result[newKey] = value;
+                } else {
+                    helper(value, newKey);
+                }
             } else {
                 result[newKey] = value;
             }
