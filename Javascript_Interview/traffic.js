@@ -31,10 +31,130 @@ const config = {
 
 let i = 0;
 
-function simulateTraffic() {
+// State for each street
+const streets = config.streetNames.map((name) => ({
+  name,
+  queue: 0,
+  lastGreenTime: Date.now(),
+}));
 
+let currentGreen = 0; // index of active green street
+let greenStartedAt = Date.now();
+
+// External function to add cars
+function addCar(streetIndex) {
+  if (streets[streetIndex]) {
+    streets[streetIndex].queue++;
+    console.log(`Car added to ${streets[streetIndex].name}`);
+  }
 }
 
-function controlTrafficForSignalA() {}
-function controlTrafficForSignalB() {}
-function controlTrafficForSignalC() {}
+// Main simulation
+function simulateTraffic() {
+  setInterval(() => {
+    const now = Date.now();
+    const currentStreet = streets[currentGreen];
+
+    // Cars pass through current green every second
+    if (currentStreet.queue > 0) {
+      currentStreet.queue = Math.max(
+        0,
+        currentStreet.queue - config.numberOfCarsPassThroughIntersectionPerSecond
+      );
+      console.log(
+        `${currentStreet.name} GREEN -> ${currentStreet.queue} cars remaining`
+      );
+    }
+
+    decideNextGreen(now);
+  }, 1000);
+}
+
+// Decide next signal based on rules
+function decideNextGreen(now) {
+  const currentStreet = streets[currentGreen];
+  const greenDuration = now - greenStartedAt;
+
+  const minGreenSatisfied =
+    greenDuration >= config.minGreenDurationInMilliSeconds ||
+    currentStreet.queue === 0;
+
+  if (!minGreenSatisfied) return;
+
+  let nextStreet = null;
+
+  // Rule 2: waited too long
+  nextStreet = streets.findIndex(
+    (street, idx) =>
+      idx !== currentGreen &&
+      street.queue > 0 &&
+      now - street.lastGreenTime >= config.maxWaitForGreenInMilliSeconds
+  );
+
+  // Rule 3: enough cars waiting
+  if (nextStreet === -1 || nextStreet === null) {
+    nextStreet = streets.findIndex(
+      (street, idx) =>
+        idx !== currentGreen &&
+        street.queue >= config.carsForGreen
+    );
+  }
+
+  // Rule 4: longest waiting street with cars
+  if (nextStreet === -1 || nextStreet === null) {
+    let maxWait = -1;
+    streets.forEach((street, idx) => {
+      if (idx !== currentGreen && street.queue > 0) {
+        const wait = now - street.lastGreenTime;
+        if (wait > maxWait) {
+          maxWait = wait;
+          nextStreet = idx;
+        }
+      }
+    });
+  }
+
+  // Switch if valid street found
+  if (nextStreet !== -1 && nextStreet !== null) {
+    switchGreen(nextStreet);
+  }
+}
+
+// Change green signal
+function switchGreen(nextIndex) {
+  streets[currentGreen].lastGreenTime = Date.now();
+
+  currentGreen = nextIndex;
+  greenStartedAt = Date.now();
+
+  console.log(
+    `\n=== GREEN switched to ${streets[currentGreen].name} ===`
+  );
+
+  if (currentGreen === 0) controlTrafficForSignalA();
+  if (currentGreen === 1) controlTrafficForSignalB();
+  if (currentGreen === 2) controlTrafficForSignalC();
+}
+
+// Optional handlers
+function controlTrafficForSignalA() {
+  console.log("Signal A active");
+}
+
+function controlTrafficForSignalB() {
+  console.log("Signal B active");
+}
+
+function controlTrafficForSignalC() {
+  console.log("Signal C active");
+}
+
+// Start simulation
+simulateTraffic();
+
+// Example traffic
+setTimeout(() => addCar(0), 1000);
+setTimeout(() => addCar(1), 2000);
+setTimeout(() => addCar(1), 3000);
+setTimeout(() => addCar(1), 4000);
+setTimeout(() => addCar(2), 5000);
