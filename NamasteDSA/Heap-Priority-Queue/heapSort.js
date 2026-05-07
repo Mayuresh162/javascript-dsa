@@ -1,12 +1,12 @@
-function heapSort(arr) {
+function heapSort(arr) { // TC: O(n logn), SC: O(1)
     const n = arr.length;
   
-    // create maxHeap
+    // create maxHeap TC: O(n)
     for (let i=Math.floor(n/2) - 1; i>=0; i--) {
         heapifyDown(arr, i, n);
     }
     
-    // sort the maxHeap
+    // sort the maxHeap TC: O(log n)
     for (let i=n-1; i>0; i--) {
         [arr[0], arr[i]] = [arr[i], arr[0]];
         heapifyDown(arr, 0, i);
