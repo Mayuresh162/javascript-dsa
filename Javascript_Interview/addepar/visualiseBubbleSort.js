@@ -1,93 +1,174 @@
-// html
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Visualize Sorting Algorithm</title>
-  </head>
-  <body>
-    <!-- You can add your own HTML here -->
-    <div class="visualise" id="container"></div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bubble Sort Visualizer</title>
 
-    <button onclick="start()">Start Sorting</button>
-  </body>
-</html>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
 
-// css
-.visualise {
-  height: 300px;
-  display: flex;
-  align-items: flex-end;
-  gap: 5px;
-  margin-top: 20px;
-}
+    .visualise {
+      height: 350px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 30px;
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
 
-.bar {
-  width: 40px;
-  background: black;
-  transition: all 0.3s ease;
-}
+    .bar {
+      width: 40px;
+      background: black;
+      transition: height 0.3s ease;
+    }
 
-// js
-/*
- * An unsorted array
- */
-let array = [10, 16, 3, 2, 64, 32, 11];
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
 
-/*
- * Implementation of the bubble sort algorithm.
- *
- * @param list {Array<number>} a list of numbers
- * @return list {Array<number>} a sorted list of numbers
- */
-function bubbleSort(list) {
-  let result = [...list];
-  let length = list.length;
-  const frames = [];
+    button {
+      padding: 10px 18px;
+      cursor: pointer;
+      border: none;
+      background: black;
+      color: white;
+      border-radius: 5px;
+    }
 
-  for (let i = 0; i < length - 1; i++) {
-    for (let j = 0; j < length - i - 1; j++) {
-      if (result[j] > result[j + 1]) {
-        [result[j], result[j + 1]] = [result[j + 1], result[j]];
-        frames.push([...result]);
+    button:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Bubble Sort Visualizer</h1>
+
+  <div class="controls">
+    <button onclick="start()">Start</button>
+    <button onclick="pauseSort()">Pause</button>
+    <button onclick="resumeSort()">Resume</button>
+    <button onclick="stopSort()">Stop</button>
+  </div>
+
+  <div class="visualise" id="container"></div>
+
+  <script>
+
+    const originalArray = [10, 16, 3, 2, 64, 32, 11];
+
+    const container = document.getElementById("container");
+
+    let frames = [];
+
+    let currentFrame = 0;
+
+    let paused = false;
+
+    let stopped = false;
+
+    // render bars
+    function render(arr) {
+
+      container.innerHTML = "";
+
+      arr.forEach((num) => {
+
+        const div = document.createElement("div");
+
+        div.classList.add("bar");
+
+        div.style.height = `${num * 4}px`;
+
+        container.appendChild(div);
+      });
+    }
+
+    // generate frames
+    function bubbleSort(arr) {
+
+      const result = [...arr];
+
+      const tempFrames = [[...result]];
+
+      for (let i = 0; i < result.length - 1; i++) {
+
+        for (let j = 0; j < result.length - i - 1; j++) {
+
+          if (result[j] > result[j + 1]) {
+
+            [result[j], result[j + 1]] =
+            [result[j + 1], result[j]];
+
+            tempFrames.push([...result]);
+          }
+        }
+      }
+
+      return tempFrames;
+    }
+
+    // delay helper
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function start() {
+
+      stopped = false;
+      paused = false;
+
+      currentFrame = 0;
+
+      frames = bubbleSort(originalArray);
+
+      while (currentFrame < frames.length) {
+
+        if (stopped) {
+          render(originalArray);
+          return;
+        }
+
+        // pause loop
+        while (paused) {
+          await sleep(100);
+        }
+
+        render(frames[currentFrame]);
+
+        currentFrame++;
+
+        await sleep(500);
       }
     }
-  }
 
-  return frames;
-}
+    function pauseSort() {
+      paused = true;
+    }
 
-// Add your javascript here
-const container = document.getElementById("container");
+    function resumeSort() {
+      paused = false;
+    }
 
-// render bars
-function render(arr) {
-  container.innerHTML = "";
+    function stopSort() {
+      stopped = true;
+      paused = false;
+      currentFrame = 0;
+    }
 
-  arr.forEach((num) => {
-    const div = document.createElement("div");
+    render(originalArray);
 
-    div.classList.add("bar");
+  </script>
 
-    div.style.height = `${num * 4}px`;
-
-    container.appendChild(div);
-  });
-}
-
-async function start() {
-
-  const frames = bubbleSort(array);
-
-  for (let frame of frames) {
-
-    render(frame);
-
-    // pause animation
-    await new Promise((resolve) =>
-      setTimeout(resolve, 500)
-    );
-  }
-}
-
-render(array);
+</body>
+</html>
