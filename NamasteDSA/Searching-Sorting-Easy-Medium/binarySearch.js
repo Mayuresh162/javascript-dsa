@@ -3,7 +3,7 @@
  * @param {number} target
  * @return {number}
  */
-var search = function(nums, target) {
+var search = function(nums, target) { // TC: O(log n) SC: O(1)
     let l = 0;
     let h = nums.length - 1;
     while(l<=h) {
