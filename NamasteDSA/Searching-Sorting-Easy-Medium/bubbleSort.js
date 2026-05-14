@@ -12,15 +12,15 @@ console.log(arr); // [1,2,4,5] tc: O(n^2) , sc: O(1)
 
 // more optimised
 function bubbleSort(arr) {
-    for (var i = arr.length; i > 0; i--) {
-        let isSwap = 0;
-        for (var j = 0; j < i - 1; j++) {
+    for (let i=0; i<arr.length-1; i++) {
+        let isSwap = false;
+        for (var j = 0; j < arr.length-1-i; j++) {
             if (arr[j] > arr[j+1]) {
                 [arr[j], arr[j+1]] = [arr[j+1], arr[j]]
-                isSwap = 1;
+                isSwap = true;
             }
         }
-        if (isSwap == 0) break;
+        if (!isSwap) break;
     }
     console.log(arr);
 }
