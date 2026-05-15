@@ -3,7 +3,7 @@
  * @return {number[]}
  */
 var sortArray = function(nums) {
-    // TC: O(nlogn) SC: O(1)
+    // TC: O(nlogn) SC: O(n)
     function merge(arr1, arr2) {
         const temp = [];
         let left = 0;
