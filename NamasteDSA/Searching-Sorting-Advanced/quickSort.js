@@ -1,4 +1,4 @@
-function findPivotIdx(arr, start, end) { // TC: O(nlogn), SC: O(1)
+function findPivotIdx(arr, start, end) { // TC: O(nlogn) best, O(n^2) worst on already sorted array,  SC: O(logn) efficient
     let pivot = arr[end];
     let pos = start-1;
 
