@@ -1,4 +1,4 @@
-function bucketSort(arr) {
+function bucketSort(arr) { // TC: avg case: O(n+k), worst case: O(n^2); SC: O(n+k); k => no. of buckets
     const n = arr.length;
 
     let buckets = Array.from({ length: n }, () => []);
